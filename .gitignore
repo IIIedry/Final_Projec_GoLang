@@ -22,3 +22,5 @@ go.work
 
 Application/schema
 Application/configs
+*.yaml
+
