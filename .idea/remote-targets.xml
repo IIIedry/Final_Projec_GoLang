@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="RemoteTargetsManager">
+    <option name="projectDefaultTargetUuid" value="eb4ef0bf-06ea-44ae-9896-e17555f53613" />
+    <targets>
+      <target name="WSL - Ubuntu-20.04" type="wsl" uuid="eb4ef0bf-06ea-44ae-9896-e17555f53613">
+        <config>
+          <option name="distributionMsId" value="Ubuntu-20.04" />
+          <option name="projectRootOnTarget" value="{exitCode=0, timeout=false, cancelled=false, stdout=/mnt/c/Users/diyas/AppData/Local/Programs/GoLand/jbr/bin&#10;, stderr=}/Final_Projec_GoLang" />
+        </config>
+        <ContributedStateBase type="GoLanguageRuntime">
+          <config>
+            <option name="goPath" value="bash: /home/ace/.profile: line 28: syntax error near unexpected token `('" />
+            <option name="goRoot" value="bash: /home/ace/.profile: line 28: syntax error near unexpected token `('" />
+            <option name="goVersion" value="bash: /home/ace/.profile: line 28: syntax error near unexpected token `('" />
+          </config>
+        </ContributedStateBase>
+      </target>
+    </targets>
+  </component>
+</project>
