@@ -1,0 +1,7 @@
+port: "8080"
+Postgres:
+  USER: "postgres"
+  HOST: "localhost"
+  PORT: "5436"
+  DB: "postgres"
+
