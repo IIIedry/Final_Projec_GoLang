@@ -1,5 +1,7 @@
 package repository
 
+import "github.com/jackc/pgx/v4"
+
 type Authorization interface {
 }
 
@@ -18,6 +20,6 @@ type Repository struct {
 	Products
 }
 
-func NewRepository() *Repository {
+func NewRepository(db *pgx.Conn) *Repository {
 	return &Repository{}
 }
