@@ -17,9 +17,22 @@ func NewHandler(services *service.Service) *Handler {
 
 func (h *Handler) InitRoutes() *gin.Engine {
 	router := gin.New()
+	home := router.Group("/")
+	{
+		home.GET("/", func(c *gin.Context) {
+			c.JSON(200, gin.H{
+				"message": "Hello, World!",
+			})
+		})
+	}
 	auth := router.Group("/auth")
 	{
 		_ = auth
 	}
+	product := router.Group("/product")
+	{
+		product.POST("/create", h.AddProduct)
+	}
+
 	return router
 }

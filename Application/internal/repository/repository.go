@@ -1,6 +1,10 @@
 package repository
 
-import "github.com/jackc/pgx/v4"
+import (
+	"Application"
+	"github.com/gin-gonic/gin"
+	"github.com/jackc/pgx/v4"
+)
 
 type Authorization interface {
 }
@@ -11,7 +15,9 @@ type Administrator interface {
 type Orders interface {
 }
 
-type Products interface{}
+type Products interface {
+	Create(product Application.Product, ctx *gin.Context) (string, error)
+}
 
 type Repository struct {
 	Authorization
@@ -21,5 +27,7 @@ type Repository struct {
 }
 
 func NewRepository(db *pgx.Conn) *Repository {
-	return &Repository{}
+	return &Repository{
+		Products: NewProductsPg(db),
+	}
 }
