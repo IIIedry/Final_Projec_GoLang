@@ -21,3 +21,14 @@ func (h *Handler) AddProduct(c *gin.Context) {
 	},
 	)
 }
+
+func (h *Handler) GetAllProducts(c *gin.Context) {
+	products, err := h.services.Products.GetAll(c)
+	if err != nil {
+		log.Println(err)
+	}
+	c.JSON(200, gin.H{
+		"products": products,
+	},
+	)
+}

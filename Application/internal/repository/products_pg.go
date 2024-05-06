@@ -4,6 +4,7 @@ import (
 	"Application"
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v4"
+	"log"
 )
 
 type ProductsPgx struct {
@@ -31,4 +32,27 @@ func (r *ProductsPgx) Create(product Application.Product, ctx *gin.Context) (str
 		return "0", err
 	}
 	return name, tx.Commit(ctx)
+}
+
+func (r *ProductsPgx) GetAll(ctx *gin.Context) ([]Application.Product, error) {
+	var products []Application.Product
+	tx, err := r.conn.Begin(ctx)
+	rows, err := tx.Query(ctx, "SELECT * FROM products")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var product Application.Product
+		err = rows.Scan(&product.ID, &product.Name, &product.Description, &product.Price, &product.Count, &product.CreatedAt)
+		log.Println(product)
+		if err != nil {
+			return nil, err
+		}
+		products = append(products, product)
+		log.Println(products)
+	}
+	tx.Commit(ctx)
+	return products, nil
 }

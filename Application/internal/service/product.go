@@ -17,3 +17,7 @@ func NewProductService(repo repository.Products) *ProductService {
 func (s *ProductService) Create(product Application.Product, ctx *gin.Context) (string, error) {
 	return s.repo.Create(product, ctx)
 }
+
+func (s *ProductService) GetAll(ctx *gin.Context) ([]Application.Product, error) {
+	return s.repo.GetAll(ctx)
+}
