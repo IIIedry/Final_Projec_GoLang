@@ -17,7 +17,7 @@ type Orders interface {
 
 type Products interface {
 	Create(product Application.Product, ctx *gin.Context) (string, error)
-	//GetAll() ([]Application.Product, error)
+	GetAll(ctx *gin.Context) ([]Application.Product, error)
 	//GetById(id int) (Application.Product, error)
 	//Delete(id int) (bool, error)
 	//Update(product Application.Product) (int, error)

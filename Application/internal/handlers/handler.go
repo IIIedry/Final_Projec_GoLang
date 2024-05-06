@@ -32,6 +32,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	product := router.Group("/product")
 	{
 		product.POST("/create", h.AddProduct)
+		product.GET("/", h.GetAllProducts)
 	}
 
 	return router
