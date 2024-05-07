@@ -2,9 +2,12 @@ package repository
 
 import (
 	"Application"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v4"
 	"log"
+	"strconv"
+	"strings"
 )
 
 type ProductsPgx struct {
@@ -55,4 +58,72 @@ func (r *ProductsPgx) GetAll(ctx *gin.Context) ([]Application.Product, error) {
 	}
 	tx.Commit(ctx)
 	return products, nil
+}
+
+func (r *ProductsPgx) GetById(id int, ctx *gin.Context) (Application.Product, error) {
+	var product Application.Product
+	tx, err := r.conn.Begin(ctx)
+	if err != nil {
+		return product, err
+	}
+	row := tx.QueryRow(ctx, "SELECT * FROM products WHERE id = $1", id)
+	err = row.Scan(&product.ID, &product.Name, &product.Description, &product.Price, &product.Count, &product.CreatedAt)
+	if err != nil {
+		return product, err
+	}
+	tx.Commit(ctx)
+	return product, nil
+}
+
+func (r *ProductsPgx) Update(product Application.Product, ctx *gin.Context) (int, error) {
+	tx, err := r.conn.Begin(ctx)
+	if err != nil {
+		return 0, err
+	}
+	setValues := make([]string, 0)
+	args := make([]interface{}, 0)
+	argId := 1
+	if product.Name != "" {
+		setValues = append(setValues, "name = $"+strconv.Itoa(argId))
+		args = append(args, product.Name)
+		argId++
+	}
+	if product.Description != "" {
+		setValues = append(setValues, "description = $"+strconv.Itoa(argId))
+		args = append(args, product.Description)
+		argId++
+	}
+	if product.Price != 0 {
+		setValues = append(setValues, "price = $"+strconv.Itoa(argId))
+		args = append(args, product.Price)
+		argId++
+	}
+	if product.Count != 0 {
+		setValues = append(setValues, "count = $"+strconv.Itoa(argId))
+		args = append(args, product.Count)
+		argId++
+	}
+	args = append(args, product.ID)
+	setQuery := strings.Join(setValues, ", ")
+	query := fmt.Sprintf("UPDATE products SET %s WHERE id = $%d", setQuery, argId)
+	_, err = tx.Exec(ctx, query, args...)
+	if err != nil {
+		return 0, nil
+	}
+
+	tx.Commit(ctx)
+	return 1, nil
+}
+
+func (r *ProductsPgx) Delete(id int, ctx *gin.Context) (bool, error) {
+	tx, err := r.conn.Begin(ctx)
+	if err != nil {
+		return false, err
+	}
+	_, err = tx.Exec(ctx, "DELETE FROM products WHERE id = $1", id)
+	if err != nil {
+		return false, err
+	}
+	tx.Commit(ctx)
+	return true, nil
 }

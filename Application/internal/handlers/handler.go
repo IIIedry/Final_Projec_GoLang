@@ -33,6 +33,9 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	{
 		product.POST("/create", h.AddProduct)
 		product.GET("/", h.GetAllProducts)
+		product.GET("/:id", h.GetProductById)
+		product.PUT("/:id/update", h.UpdateProduct)
+		product.DELETE("/:id/delete", h.DeleteProduct)
 	}
 
 	return router
