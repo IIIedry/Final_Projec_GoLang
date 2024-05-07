@@ -18,6 +18,9 @@ type Orders interface {
 type Products interface {
 	Create(product Application.Product, ctx *gin.Context) (string, error)
 	GetAll(ctx *gin.Context) ([]Application.Product, error)
+	GetById(id int, ctx *gin.Context) (Application.Product, error)
+	Update(product Application.Product, ctx *gin.Context) (int, error)
+	Delete(id int, ctx *gin.Context) (bool, error)
 }
 
 type Repository struct {
