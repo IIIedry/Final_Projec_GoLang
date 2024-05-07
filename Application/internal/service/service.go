@@ -13,11 +13,7 @@ type Administrator interface {
 }
 
 type Orders interface {
-	Create(product Application.Order, ctx *gin.Context) (string, error)
-	GetAll(ctx *gin.Context) ([]Application.Product, error)
-	GetById(id int, ctx *gin.Context) (Application.Order, error)
-	Delete(id int, ctx *gin.Context) (bool, error)
-	Update(order Application.Order, ctx *gin.Context) (int, error)
+	
 }
 
 type Products interface {
