@@ -19,6 +19,11 @@ type Administrator interface {
 }
 
 type Orders interface {
+	Create(order Application.Order, ctx *gin.Context) (string, error)
+	GetAll(ctx *gin.Context) ([]Application.Order, error)
+	GetById(id int, ctx *gin.Context) (Application.Order, error)
+	Delete(id int, ctx *gin.Context) (bool, error)
+	Update(product Application.Order, ctx *gin.Context) (int, error)
 }
 
 type Products interface {
@@ -41,5 +46,6 @@ func NewRepository(db *pgx.Conn) *Repository {
 		Products:      NewProductsPg(db),
 		Authorization: NewUsersPg(db),
 		Administrator: NewAdminPg(db),
+		Orders:        NewOrdersPg(db),
 	}
 }

@@ -19,11 +19,11 @@ type Administrator interface {
 }
 
 type Orders interface {
-	Create(order Application.Product, ctx *gin.Context) (string, error)
-	GetAll(ctx *gin.Context) ([]Application.Product, error)
-	GetById(id int, ctx *gin.Context) (Application.Product, error)
+	Create(order Application.Order, ctx *gin.Context) (string, error)
+	GetAll(ctx *gin.Context) ([]Application.Order, error)
+	GetById(id int, ctx *gin.Context) (Application.Order, error)
 	Delete(id int, ctx *gin.Context) (bool, error)
-	Update(product Application.Product, ctx *gin.Context) (int, error)
+	Update(product Application.Order, ctx *gin.Context) (int, error)
 }
 
 type Products interface {
@@ -46,5 +46,6 @@ func NewService(repos *repository.Repository) *Service {
 		Products:      NewProductService(repos.Products),
 		Authorization: NewUserService(repos.Authorization),
 		Administrator: NewAdminService(repos.Administrator),
+		Orders:        NewOrderService(repos.Orders),
 	}
 }
