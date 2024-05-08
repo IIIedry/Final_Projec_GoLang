@@ -12,6 +12,7 @@ type Authorization interface {
 	AuthenticateUser(username, password string, ctx *gin.Context) (*Application.User, error)
 	IsAdmin(username, password string, ctx *gin.Context) (bool, error)
 	UpdateUserRole(userID int, newRole string, ctx *gin.Context) error
+	GetUserById(id int, ctx *gin.Context) (Application.User, error)
 }
 
 type Administrator interface {

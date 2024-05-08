@@ -4,6 +4,7 @@ import (
 	"Application"
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v4"
+	"golang.org/x/crypto/bcrypt"
 	"log"
 )
 
@@ -22,8 +23,13 @@ func (r *UsersPgx) CreateUser(user Application.User, ctx *gin.Context) (string, 
 	}
 	defer tx.Rollback(ctx)
 
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return "0", err
+	}
+
 	var name string
-	row := tx.QueryRow(ctx, "INSERT INTO users (name , email, username, password) VALUES ($1, $2, $3, $4) RETURNING name", user.Name, user.Email, user.Username, user.Password)
+	row := tx.QueryRow(ctx, "INSERT INTO users (name , email, username, password) VALUES ($1, $2, $3, $4) RETURNING name", user.Name, user.Email, user.Username, hashedPassword)
 	if err = row.Scan(&name); err != nil {
 		tx.Rollback(ctx)
 		return "0", err
@@ -33,10 +39,11 @@ func (r *UsersPgx) CreateUser(user Application.User, ctx *gin.Context) (string, 
 	}
 	return name, tx.Commit(ctx)
 }
+
 func (r *UsersPgx) GetAllUser(ctx *gin.Context) ([]Application.User, error) {
 	var users []Application.User
 	tx, err := r.conn.Begin(ctx)
-	rows, err := tx.Query(ctx, "SELECT * FROM users")
+	rows, err := tx.Query(ctx, "SELECT id, name, email, username, role FROM users;")
 	if err != nil {
 		return nil, err
 	}
@@ -44,7 +51,7 @@ func (r *UsersPgx) GetAllUser(ctx *gin.Context) ([]Application.User, error) {
 
 	for rows.Next() {
 		var user Application.User
-		err = rows.Scan(&user.ID, &user.Name, &user.Email, &user.Username, &user.Password, &user.Role)
+		err = rows.Scan(&user.ID, &user.Name, &user.Email, &user.Username, &user.Role)
 		log.Println(user)
 		if err != nil {
 			return nil, err
@@ -95,13 +102,31 @@ func (r *UsersPgx) UpdateUserRole(userID int, newRole string, ctx *gin.Context) 
 		return err
 	}
 
-	// Обновляем роль пользователя по его идентификатору
 	_, err = tx.Exec(ctx, "UPDATE users SET role = $1 WHERE id = $2", newRole, userID)
 	if err != nil {
 		tx.Rollback(ctx)
 		return err
 	}
 
-	tx.Commit(ctx)
+	err = tx.Commit(ctx)
+	if err != nil {
+		return err
+	}
+
 	return nil
+}
+
+func (r *UsersPgx) GetUserById(id int, ctx *gin.Context) (Application.User, error) {
+	var user Application.User
+	tx, err := r.conn.Begin(ctx)
+	if err != nil {
+		return user, err
+	}
+	row := tx.QueryRow(ctx, "SELECT id, name, email, username, role FROM users WHERE id = $1", id)
+	err = row.Scan(&user.ID, &user.Name, &user.Email, &user.Username, &user.Role)
+	if err != nil {
+		return user, err
+	}
+	tx.Commit(ctx)
+	return user, nil
 }

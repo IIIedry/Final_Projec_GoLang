@@ -30,6 +30,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		auth.POST("/create", h.AddUser)
 		auth.GET("/", h.GetAllUser)
 		auth.POST("/login", h.Login)
+		auth.GET("/:id", h.GetUserById)
 		auth.POST("/update_role", h.UpdateUserRole)
 		auth.POST("/status", h.Login_Admin)
 	}

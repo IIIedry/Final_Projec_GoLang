@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
+	"strconv"
 )
 
 func (h *Handler) AddUser(c *gin.Context) {
@@ -73,15 +74,14 @@ func (h *Handler) Login_Admin(c *gin.Context) {
 	}
 
 	//if isAdmin {
-	//	// Вернуть токен администратора или какой-то другой признак администратора
 	//}
 	c.JSON(http.StatusOK, gin.H{"is_admin": isAdmin})
 }
 
 func (h *Handler) UpdateUserRole(c *gin.Context) {
 	var req struct {
-		UserID  int    `json:"user_id"`
-		NewRole string `json:"new_role"`
+		UserID  int    `json:"ID"`
+		NewRole string `json:"Role"`
 	}
 	if err := c.BindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request"})
@@ -91,9 +91,22 @@ func (h *Handler) UpdateUserRole(c *gin.Context) {
 	err := h.services.Authorization.UpdateUserRole(req.UserID, req.NewRole, c)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "user role updated successfully"})
+}
+
+func (h *Handler) GetUserById(c *gin.Context) {
+	id := c.Param("id")
+	id_num, err := strconv.ParseInt(id, 10, 64)
+	user, err := h.services.Authorization.GetUserById(int(id_num), c)
+	if err != nil {
+		log.Println(err)
+	}
+	c.JSON(200, gin.H{
+		"user": user,
+	},
+	)
 }
