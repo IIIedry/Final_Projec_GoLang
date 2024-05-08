@@ -10,6 +10,8 @@ type Authorization interface {
 	CreateUser(user Application.User, ctx *gin.Context) (string, error)
 	GetAllUser(ctx *gin.Context) ([]Application.User, error)
 	AuthenticateUser(username, password string, ctx *gin.Context) (*Application.User, error)
+	IsAdmin(username, password string, ctx *gin.Context) (bool, error)
+	UpdateUserRole(userID int, newRole string, ctx *gin.Context) error
 }
 
 type Administrator interface {

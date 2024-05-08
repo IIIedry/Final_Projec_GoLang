@@ -23,7 +23,7 @@ func (r *UsersPgx) CreateUser(user Application.User, ctx *gin.Context) (string, 
 	defer tx.Rollback(ctx)
 
 	var name string
-	row := tx.QueryRow(ctx, "INSERT INTO users (id, name , email, username, password, role) VALUES ($1, $2, $3, $4, $5, $6) RETURNING name", user.ID, user.Name, user.Email, user.Username, user.Password, user.Role)
+	row := tx.QueryRow(ctx, "INSERT INTO users (name , email, username, password) VALUES ($1, $2, $3, $4) RETURNING name", user.Name, user.Email, user.Username, user.Password)
 	if err = row.Scan(&name); err != nil {
 		tx.Rollback(ctx)
 		return "0", err
@@ -71,4 +71,37 @@ func (r *UsersPgx) AuthenticateUser(username, password string, ctx *gin.Context)
 
 	tx.Commit(ctx)
 	return &user, nil
+}
+
+func (r *UsersPgx) IsAdmin(username, password string, ctx *gin.Context) (bool, error) {
+	var isAdmin bool
+	tx, err := r.conn.Begin(ctx)
+	if err != nil {
+		return false, err
+	}
+
+	err = tx.QueryRow(ctx, "SELECT EXISTS (SELECT 1 FROM users WHERE username = $1 AND password = $2 AND role = 'admin')", username, password).Scan(&isAdmin)
+	if err != nil {
+		return false, err
+	}
+
+	tx.Commit(ctx)
+	return isAdmin, nil
+}
+
+func (r *UsersPgx) UpdateUserRole(userID int, newRole string, ctx *gin.Context) error {
+	tx, err := r.conn.Begin(ctx)
+	if err != nil {
+		return err
+	}
+
+	// Обновляем роль пользователя по его идентификатору
+	_, err = tx.Exec(ctx, "UPDATE users SET role = $1 WHERE id = $2", newRole, userID)
+	if err != nil {
+		tx.Rollback(ctx)
+		return err
+	}
+
+	tx.Commit(ctx)
+	return nil
 }

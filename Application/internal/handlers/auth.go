@@ -54,3 +54,46 @@ func (h *Handler) Login(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"user": user})
 }
+
+func (h *Handler) Login_Admin(c *gin.Context) {
+	var req struct {
+		Username string `json:"username"`
+		Password string `json:"password"`
+	}
+	if err := c.BindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request"})
+		return
+	}
+
+	isAdmin, err := h.services.Authorization.IsAdmin(req.Username, req.Password, c)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+		return
+	}
+
+	//if isAdmin {
+	//	// Вернуть токен администратора или какой-то другой признак администратора
+	//}
+	c.JSON(http.StatusOK, gin.H{"is_admin": isAdmin})
+}
+
+func (h *Handler) UpdateUserRole(c *gin.Context) {
+	var req struct {
+		UserID  int    `json:"user_id"`
+		NewRole string `json:"new_role"`
+	}
+	if err := c.BindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request"})
+		return
+	}
+
+	err := h.services.Authorization.UpdateUserRole(req.UserID, req.NewRole, c)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "user role updated successfully"})
+}

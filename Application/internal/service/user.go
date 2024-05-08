@@ -30,3 +30,19 @@ func (s *UserService) AuthenticateUser(username, password string, ctx *gin.Conte
 
 	return user, nil
 }
+
+func (s *UserService) IsAdmin(username, password string, ctx *gin.Context) (bool, error) {
+	isAdmin, err := s.repo.IsAdmin(username, password, ctx)
+	if err != nil {
+		return false, err
+	}
+	return isAdmin, nil
+}
+
+func (s *UserService) UpdateUserRole(userID int, newRole string, ctx *gin.Context) error {
+	err := s.repo.UpdateUserRole(userID, newRole, ctx)
+	if err != nil {
+		return err
+	}
+	return nil
+}
