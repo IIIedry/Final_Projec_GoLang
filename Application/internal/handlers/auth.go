@@ -4,6 +4,7 @@ import (
 	"Application"
 	"github.com/gin-gonic/gin"
 	"log"
+	"net/http"
 )
 
 func (h *Handler) AddUser(c *gin.Context) {
@@ -32,4 +33,24 @@ func (h *Handler) GetAllUser(c *gin.Context) {
 		"user": users,
 	},
 	)
+}
+
+func (h *Handler) Login(c *gin.Context) {
+	var req struct {
+		Username string `json:"username"`
+		Password string `json:"password"`
+	}
+	if err := c.BindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request"})
+		return
+	}
+
+	user, err := h.services.Authorization.AuthenticateUser(req.Username, req.Password, c)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid username or password"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"user": user})
 }

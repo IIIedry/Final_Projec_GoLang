@@ -21,3 +21,12 @@ func (s *UserService) CreateUser(user Application.User, ctx *gin.Context) (strin
 func (s *UserService) GetAllUser(ctx *gin.Context) ([]Application.User, error) {
 	return s.repo.GetAllUser(ctx)
 }
+
+func (s *UserService) AuthenticateUser(username, password string, ctx *gin.Context) (*Application.User, error) {
+	user, err := s.repo.AuthenticateUser(username, password, ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}

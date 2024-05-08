@@ -55,3 +55,20 @@ func (r *UsersPgx) GetAllUser(ctx *gin.Context) ([]Application.User, error) {
 	tx.Commit(ctx)
 	return users, nil
 }
+
+func (r *UsersPgx) AuthenticateUser(username, password string, ctx *gin.Context) (*Application.User, error) {
+	var user Application.User
+	tx, err := r.conn.Begin(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	err = tx.QueryRow(ctx, "SELECT * FROM users WHERE username = $1 AND password = $2", username, password).
+		Scan(&user.ID, &user.Name, &user.Email, &user.Username, &user.Password, &user.Role)
+	if err != nil {
+		return nil, err
+	}
+
+	tx.Commit(ctx)
+	return &user, nil
+}

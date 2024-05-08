@@ -9,6 +9,7 @@ import (
 type Authorization interface {
 	CreateUser(user Application.User, ctx *gin.Context) (string, error)
 	GetAllUser(ctx *gin.Context) ([]Application.User, error)
+	AuthenticateUser(username, password string, ctx *gin.Context) (*Application.User, error)
 }
 
 type Administrator interface {
