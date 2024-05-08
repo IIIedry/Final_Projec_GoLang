@@ -8,14 +8,14 @@ import (
 
 type Authorization interface {
 	CreateUser(user Application.User, ctx *gin.Context) (string, error)
-	GetAllUser(ctx *gin.Context) ([]Application.User, error)
 	AuthenticateUser(username, password string, ctx *gin.Context) (*Application.User, error)
-	IsAdmin(username, password string, ctx *gin.Context) (bool, error)
-	UpdateUserRole(userID int, newRole string, ctx *gin.Context) error
 	GetUserById(id int, ctx *gin.Context) (Application.User, error)
 }
 
 type Administrator interface {
+	GetAllUser(ctx *gin.Context) ([]Application.User, error)
+	UpdateUserRole(userID int, newRole string, ctx *gin.Context) error
+	IsAdmin(username, password string, ctx *gin.Context) (bool, error)
 }
 
 type Orders interface {
@@ -40,5 +40,6 @@ func NewService(repos *repository.Repository) *Service {
 	return &Service{
 		Products:      NewProductService(repos.Products),
 		Authorization: NewUserService(repos.Authorization),
+		Administrator: NewAdminService(repos.Administrator),
 	}
 }

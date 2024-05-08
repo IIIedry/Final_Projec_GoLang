@@ -24,10 +24,6 @@ func (s *UserService) CreateUser(user Application.User, ctx *gin.Context) (strin
 	return s.repo.CreateUser(user, ctx)
 }
 
-func (s *UserService) GetAllUser(ctx *gin.Context) ([]Application.User, error) {
-	return s.repo.GetAllUser(ctx)
-}
-
 func (s *UserService) AuthenticateUser(username, password string, ctx *gin.Context) (*Application.User, error) {
 	user, err := s.repo.AuthenticateUser(username, password, ctx)
 	if err != nil {
@@ -35,22 +31,6 @@ func (s *UserService) AuthenticateUser(username, password string, ctx *gin.Conte
 	}
 
 	return user, nil
-}
-
-func (s *UserService) IsAdmin(username, password string, ctx *gin.Context) (bool, error) {
-	isAdmin, err := s.repo.IsAdmin(username, password, ctx)
-	if err != nil {
-		return false, err
-	}
-	return isAdmin, nil
-}
-
-func (s *UserService) UpdateUserRole(userID int, newRole string, ctx *gin.Context) error {
-	err := s.repo.UpdateUserRole(userID, newRole, ctx)
-	if err != nil {
-		return err
-	}
-	return nil
 }
 
 func (s *UserService) GetUserById(id int, ctx *gin.Context) (Application.User, error) {

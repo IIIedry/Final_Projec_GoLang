@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  app:
+    build: ./
+    command: ./Application
+    ports:
+      - "8000:8000"
+    depends_on:
+        - db
+    environment:
+      - DB_PASSWORD=diyas
+
+  db:
+    restart: always
+    image: "postgres"
+    volumes:
+      - /var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=diyas
+    ports:
+      - "5436:5432"
