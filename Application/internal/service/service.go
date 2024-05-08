@@ -7,6 +7,8 @@ import (
 )
 
 type Authorization interface {
+	CreateUser(user Application.User, ctx *gin.Context) (string, error)
+	GetAllUser(ctx *gin.Context) ([]Application.User, error)
 }
 
 type Administrator interface {
@@ -32,5 +34,7 @@ type Service struct {
 
 func NewService(repos *repository.Repository) *Service {
 	return &Service{
-		Products: NewProductService(repos.Products)}
+		Products:      NewProductService(repos.Products),
+		Authorization: NewUserService(repos.Authorization),
+	}
 }

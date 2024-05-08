@@ -7,6 +7,8 @@ import (
 )
 
 type Authorization interface {
+	CreateUser(user Application.User, ctx *gin.Context) (string, error)
+	GetAllUser(ctx *gin.Context) ([]Application.User, error)
 }
 
 type Administrator interface {
@@ -32,6 +34,7 @@ type Repository struct {
 
 func NewRepository(db *pgx.Conn) *Repository {
 	return &Repository{
-		Products: NewProductsPg(db),
+		Products:      NewProductsPg(db),
+		Authorization: NewUsersPg(db),
 	}
 }

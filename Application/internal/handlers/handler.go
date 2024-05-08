@@ -27,7 +27,8 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	}
 	auth := router.Group("/auth")
 	{
-		_ = auth
+		auth.POST("/create", h.AddUser)
+		auth.GET("/", h.GetAllUser)
 	}
 	product := router.Group("/products")
 	{
