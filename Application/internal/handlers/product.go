@@ -39,11 +39,14 @@ func (h *Handler) GetProductById(c *gin.Context) {
 	id := c.Param("id")
 	id_num, err := strconv.ParseInt(id, 10, 64)
 	product, err := h.services.Products.GetById(int(id_num), c)
+	changes, err := h.services.ProductChange.GetChanges(int(id_num), c)
 	if err != nil {
 		log.Println(err)
 	}
 	c.JSON(200, gin.H{
+		"id":      id,
 		"product": product,
+		"changes": changes,
 	},
 	)
 }
@@ -53,15 +56,21 @@ func (h *Handler) UpdateProduct(c *gin.Context) {
 	if err := c.ShouldBind(&product); err != nil {
 		log.Println(err)
 	}
-	id := c.Param("id")
-	id_num, err := strconv.ParseInt(id, 10, 64)
-	product.ID = int(id_num)
-	updated, err := h.services.Products.Update(product, c)
+	_, result, err := h.services.Products.Update(product, c)
+	var change string
+	for key, value := range result {
+		change += key + ": " + value.(string) + ", "
+	}
+	id, _ := strconv.Atoi(c.Param("id"))
+	history, err := h.services.ProductChange.Create(Application.Change{
+		ProductID: id,
+		Change:    change,
+	}, c)
 	if err != nil {
 		log.Println(err)
 	}
 	c.JSON(200, gin.H{
-		"updated": updated,
+		"status": history,
 	},
 	)
 }

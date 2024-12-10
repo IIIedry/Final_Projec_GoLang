@@ -25,7 +25,7 @@ func (s *ProductService) Create(product Application.Product, ctx *gin.Context) (
 func (s *ProductService) GetAll(ctx *gin.Context) ([]Application.Product, error) {
 	return s.repo.GetAll(ctx)
 }
-func (s *ProductService) Update(product Application.Product, ctx *gin.Context) (int, error) {
+func (s *ProductService) Update(product Application.Product, ctx *gin.Context) (int, map[string]interface{}, error) {
 	return s.repo.Update(product, ctx)
 }
 func (s *ProductService) Delete(id int, ctx *gin.Context) (bool, error) {

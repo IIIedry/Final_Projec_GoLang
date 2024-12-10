@@ -25,12 +25,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 			})
 		})
 	}
-	auth := router.Group("/auth")
-	{
-		auth.POST("/create", h.AddUser)
-		auth.POST("/login", h.Login)
-		auth.GET("/:id", h.GetUserById)
-	}
+
 	product := router.Group("/products")
 	{
 		product.POST("/create", h.AddProduct)
@@ -38,13 +33,6 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		product.GET("/:id", h.GetProductById)
 		product.PUT("/:id/update", h.UpdateProduct)
 		product.DELETE("/:id/delete", h.DeleteProduct)
-	}
-	admin := router.Group("/admin")
-	{
-		admin.POST("/", h.Login_Admin)
-		admin.GET("/users/", h.GetAllUser)
-		admin.PUT("/users/:id/update_role", h.UpdateUserRole)
-		admin.GET("/users/:id", h.GetUserById)
 	}
 
 	return router
