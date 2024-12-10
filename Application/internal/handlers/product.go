@@ -61,7 +61,7 @@ func (h *Handler) UpdateProduct(c *gin.Context) {
 	for key, value := range result {
 		change += key + ": " + value.(string) + ", "
 	}
-	id, _ := strconv.Atoi(c.Param("id"))
+	id := c.Param("id")
 	history, err := h.services.ProductChange.Create(Application.Change{
 		ProductID: id,
 		Change:    change,
