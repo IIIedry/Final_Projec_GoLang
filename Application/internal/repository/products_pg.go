@@ -40,7 +40,7 @@ func (r *ProductsPgx) Create(product Application.Product, ctx *gin.Context) (str
 
 func (r *ProductsPgx) GetAll(ctx *gin.Context) ([]Application.Product, error) {
 	var products []Application.Product
-	rows, err := r.conn.Query(ctx, "SELECT product_id, name, description, price, count, created_at FROM products")
+	rows, err := r.conn.Query(ctx, "SELECT product_id, name, description, price, count FROM products")
 	if err != nil {
 		return nil, err
 	}
@@ -48,7 +48,7 @@ func (r *ProductsPgx) GetAll(ctx *gin.Context) ([]Application.Product, error) {
 
 	for rows.Next() {
 		var product Application.Product
-		err = rows.Scan(&product.ID, &product.Name, &product.Description, &product.Price, &product.Count, &product.CreatedAt)
+		err = rows.Scan(&product.ID, &product.Name, &product.Description, &product.Price, &product.Count)
 		log.Println(product)
 		if err != nil {
 			return nil, err
@@ -104,13 +104,13 @@ func (r *ProductsPgx) Update(product Application.Product, ctx *gin.Context) (int
 		result["description"] = product.Description
 		argId++
 	}
-	if product.Price != "" {
+	if product.Price != 0 {
 		setValues = append(setValues, "price = $"+strconv.Itoa(argId))
 		args = append(args, product.Price)
 		result["price"] = product.Price
 		argId++
 	}
-	if product.Count != "" {
+	if product.Count != 0 {
 		setValues = append(setValues, "count = $"+strconv.Itoa(argId))
 		result["count"] = product.Count
 		args = append(args, product.Count)

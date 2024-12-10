@@ -59,7 +59,13 @@ func (h *Handler) UpdateProduct(c *gin.Context) {
 	_, result, err := h.services.Products.Update(product, c)
 	var change string
 	for key, value := range result {
-		change += key + ": " + value.(string) + ", "
+		if err, ok := value.(string); !ok {
+			log.Println(err)
+			change += key + ": " + strconv.Itoa(value.(int)) + ", "
+		} else {
+			change += key + ": " + value.(string) + ", "
+		}
+
 	}
 	id := c.Param("id")
 	history, err := h.services.ProductChange.Create(Application.Change{
